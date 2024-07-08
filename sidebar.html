@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <base target="_top">
+    </head>
+    <body>
+        <input type="file" id="fileInput" accept="image/webp">
+        <script>
+        
+        document.getElementById('fileInput').addEventListener('change', handleFileSelect, false);
+
+        function handleFileSelect(event) {
+            var file = event.target.files[0];
+            if (file && file.type === 'image/webp') {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    convertWebPToPNG(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert('Please select a WebP image.');
+            }
+        }
+
+        function convertWebPToPNG(dataUrl) {
+            var img = new Image();
+            img.src = dataUrl;
+            img.onload = function() {
+                var canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+
+                var pngDataUrl = canvas.toDataURL('image/png');
+                google.script.run.insertImage(pngDataUrl);
+            };
+        }
+
+        </script>
+    </body>
+</html>
