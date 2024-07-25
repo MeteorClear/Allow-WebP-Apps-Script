@@ -2,8 +2,10 @@ function onOpen(e) {
     DocumentApp.getUi()
         .createAddonMenu()
         .addItem('Insert WebP Image', 'showSidebar')
+        .addItem('Insert WebP Image to FilePicker', 'openFilePicker')
         .addToUi();
 }
+
 
 function showSidebar() {
     var html = HtmlService.createHtmlOutputFromFile('Sidebar')
@@ -18,4 +20,11 @@ function insertImage(dataUrl) {
     
     var blob = Utilities.newBlob(Utilities.base64Decode(dataUrl.split(',')[1]), 'image/png', 'image.png');
     body.appendImage(blob);
+}
+
+function openFilePicker() {
+    var html = HtmlService.createHtmlOutputFromFile('filepicker')
+        .setWidth(400)
+        .setHeight(300);
+    DocumentApp.getUi().showModalDialog(html, 'Select a WebP Image');
 }
