@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+    <style>
+        #fileInput {
+            margin-top: 20px;
+        }
+        #uploadButton {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4881dd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #uploadButton:hover {
+            background-color: #2d6bce;
+        }
+        #progressMessage {
+            color: #555;
+            margin-top: 20px;
+        }
+        #fileInput {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <button id="uploadButton">Select WebP Image</button>
+    <input type="file" id="fileInput" accept="image/webp">
+    <div id="fileInfo"></div>
+    <div id="progressMessage"></div>
+
+    <script>
+        document.getElementById('uploadButton').addEventListener('click', function() {
+            document.getElementById('fileInput').click();
+        });
+        
+        document.getElementById('fileInput').addEventListener('change', handleFileSelect, false);
+
+        function handleFileSelect(event) {
+            var file = event.target.files[0];
+            if (file && file.type === 'image/webp') {
+                var fileInfo = `
+                    <p>File Name: ${file.name}</p>
+                    <p>File Size: ${(file.size / 1024).toFixed(2)} KB</p>
+                    <p>File Type: ${file.type}</p>
+                `;
+                document.getElementById('fileInfo').innerHTML = fileInfo;
+                document.getElementById('progressMessage').innerHTML = "Processing and inserting the image...";
+                
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    convertWebPToPNG(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert('Please select a WebP image.');
+            }
+        }
+
+        function convertWebPToPNG(dataUrl) {
+            var img = new Image();
+            img.src = dataUrl;
+            img.onload = function() {
+                var canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                var pngDataUrl = canvas.toDataURL('image/png');
+                
+                google.script.run
+                    .withSuccessHandler(function() {
+                        document.getElementById('progressMessage').innerHTML = "Image inserted successfully!";
+                        setTimeout(function() {
+                            google.script.host.close();
+                        }, 2000);
+                    })
+                    .withFailureHandler(function() {
+                        document.getElementById('progressMessage').innerHTML = "Failed to insert the image.";
+                    })
+                    .insertImage(pngDataUrl);
+            };
+        }
+    </script>
+</body>
+</html>

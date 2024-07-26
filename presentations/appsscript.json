@@ -1,0 +1,27 @@
+{
+    "timeZone": "Asia/Seoul",
+    "exceptionLogging": "STACKDRIVER",
+    "runtimeVersion": "V8",
+    "oauthScopes": [
+        "https://www.googleapis.com/auth/presentations",
+        "https://www.googleapis.com/auth/script.container.ui",
+        "https://www.googleapis.com/auth/script.external_request"
+    ],
+    "urlFetchWhitelist": [
+        "https://docs.google.com/presentation/*"
+    ],
+    "addOns": {
+        "common": {
+            "name": "Allow WebP",
+            "logoUrl": "LOGO_URL",
+            "layoutProperties": {
+                "primaryColor": "#4285F4"
+            }
+        },
+        "slides": {
+            "homepageTrigger": {
+                "runFunction": "onOpen"
+            }
+        }
+    }
+}
